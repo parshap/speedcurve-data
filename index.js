@@ -1,33 +1,28 @@
-const fetch = require('node-fetch');
-const flatMap = require('lodash/flatMap');
+const fetch = require("node-fetch");
+const flatMap = require("lodash/flatMap");
 
-const API_URL = 'https://api.speedcurve.com/v1';
-const config = require('./config.json');
+const API_URL = "https://api.speedcurve.com/v1";
+const config = require("./config.json");
 
 const parallelLimit = async (limit, fns) => {
   const results = [];
   let i = 0;
   // eslint-disable-next-line no-await-in-loop
   while (i < fns.length) {
-    results.push(...(await Promise.all(
-      fns.slice(i, i + limit)
-        .map(fn => fn())
-    )));
+    results.push(
+      ...(await Promise.all(fns.slice(i, i + limit).map(fn => fn()))),
+    );
     i += limit;
   }
   return results;
-}
+};
 
-const getAuth = (key) => (
- `Basic ${Buffer.from(`${key}:x`).toString('base64')}`
-);
+const getAuth = key => `Basic ${Buffer.from(`${key}:x`).toString("base64")}`;
 
-const fetchApi = async (url, {
-  key,
-}) => {
+const fetchApi = async (url, { key }) => {
   const res = await fetch(`${API_URL}${url}`, {
     headers: {
-      'Authorization': getAuth(key),
+      Authorization: getAuth(key),
     },
   });
   if (!res.ok) {
@@ -38,50 +33,47 @@ const fetchApi = async (url, {
   return res.json();
 };
 
-const getSites = urlsDataByTeam => flatMap(
-  urlsDataByTeam,
-  ({ teamId, data }) => (
+const getSites = urlsDataByTeam =>
+  flatMap(urlsDataByTeam, ({ teamId, data }) =>
     data.sites.map(site => ({
       teamId,
       siteId: site.site_id,
       name: site.name,
-    }))
-  )
-);
+    })),
+  );
 
-const getSiteUrls = urlsDataByTeam => flatMap(
-  urlsDataByTeam,
-  ({ teamId, data }) => (
-    flatMap(data.sites, site => (
+const getSiteUrls = urlsDataByTeam =>
+  flatMap(urlsDataByTeam, ({ teamId, data }) =>
+    flatMap(data.sites, site =>
       site.urls.map(url => ({
         teamId,
         urlId: url.url_id,
         siteId: site.site_id,
-      }))
-    ))
-  )
-);
+      })),
+    ),
+  );
 
-const getSiteUrlFromUrlId = (urlId, siteUrls) => (
-  siteUrls.find(siteUrl => siteUrl.urlId === urlId)
-);
+const getSiteUrlFromUrlId = (urlId, siteUrls) =>
+  siteUrls.find(siteUrl => siteUrl.urlId === urlId);
 
-const getUrls = (urlDataArray, siteUrls) => urlDataArray.map(urlData => ({
-  urlId: urlData.url_id,
-  siteId: (getSiteUrlFromUrlId(urlData.url_id, siteUrls) || {}).siteId,
-  teamId: (getSiteUrlFromUrlId(urlData.url_id, siteUrls) || {}).teamId,
-  url: urlData.url,
-  label: urlData.label,
-}));
-
-const getTests = (urlDataArray, siteUrls) => flatMap(urlDataArray, urlData =>
-  urlData.tests.map(testData => ({
-    ...testData,
+const getUrls = (urlDataArray, siteUrls) =>
+  urlDataArray.map(urlData => ({
     urlId: urlData.url_id,
     siteId: (getSiteUrlFromUrlId(urlData.url_id, siteUrls) || {}).siteId,
     teamId: (getSiteUrlFromUrlId(urlData.url_id, siteUrls) || {}).teamId,
-  }))
-);
+    url: urlData.url,
+    label: urlData.label,
+  }));
+
+const getTests = (urlDataArray, siteUrls) =>
+  flatMap(urlDataArray, urlData =>
+    urlData.tests.map(testData => ({
+      ...testData,
+      urlId: urlData.url_id,
+      siteId: (getSiteUrlFromUrlId(urlData.url_id, siteUrls) || {}).siteId,
+      teamId: (getSiteUrlFromUrlId(urlData.url_id, siteUrls) || {}).teamId,
+    })),
+  );
 
 /**
  * Variable naming convention:
@@ -97,26 +89,28 @@ const getTests = (urlDataArray, siteUrls) => flatMap(urlDataArray, urlData =>
 
 module.exports = async () => {
   const apiKeys = Object.values(config.teams);
-  const urlsDataByTeam = await parallelLimit(5, apiKeys.map(
-    (key, i) => async () => ({
+  const urlsDataByTeam = await parallelLimit(
+    5,
+    apiKeys.map((key, i) => async () => ({
       teamId: i,
-      data: await fetchApi('/urls', { key }),
-    })
-  ));
+      data: await fetchApi("/urls", { key }),
+    })),
+  );
   const sites = getSites(urlsDataByTeam);
   const siteUrls = getSiteUrls(urlsDataByTeam);
-  const urlDataArray = await parallelLimit(5, siteUrls.map(
-    ({ urlId, teamId }) => () => (
+  const urlDataArray = await parallelLimit(
+    5,
+    siteUrls.map(({ urlId, teamId }) => () =>
       fetchApi(`/urls/${urlId}?days=365`, {
         key: apiKeys[teamId],
-      })
-    )
-  ));
+      }),
+    ),
+  );
   const urls = getUrls(urlDataArray, siteUrls);
   const tests = getTests(urlDataArray, siteUrls);
   return {
     sites,
     urls,
-    tests
+    tests,
   };
 };
