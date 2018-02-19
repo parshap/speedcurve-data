@@ -4,7 +4,9 @@
   "description": "Aggregate data from the SpeedCurve API",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run lint",
+    "lint": "eslint .",
+    "lint-fix": "npm run --silent lint -- --fix"
   },
   "repository": {
     "type": "git",
@@ -22,5 +24,13 @@
   "dependencies": {
     "lodash": "^4.17.5",
     "node-fetch": "^2.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "prettier": "1.10.2"
   }
 }

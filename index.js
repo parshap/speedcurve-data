@@ -7,6 +7,7 @@ const config = require('./config.json');
 const parallelLimit = async (limit, fns) => {
   const results = [];
   let i = 0;
+  // eslint-disable-next-line no-await-in-loop
   while (i < fns.length) {
     results.push(...(await Promise.all(
       fns.slice(i, i + limit)
@@ -18,7 +19,7 @@ const parallelLimit = async (limit, fns) => {
 }
 
 const getAuth = (key) => (
- `Basic ${new Buffer(`${key}:x`).toString('base64')}`
+ `Basic ${Buffer.from(`${key}:x`).toString('base64')}`
 );
 
 const fetchApi = async (url, {
