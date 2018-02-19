@@ -1,0 +1,26 @@
+{
+  "name": "speedcurve-data",
+  "version": "0.0.0",
+  "description": "Aggregate data from the SpeedCurve API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parshap/speedcurve-data.git"
+  },
+  "keywords": [
+    "speedcurve"
+  ],
+  "author": "Parsha Pourkhomami",
+  "license": "WTFPL",
+  "bugs": {
+    "url": "https://github.com/parshap/speedcurve-data/issues"
+  },
+  "homepage": "https://github.com/parshap/speedcurve-data#readme",
+  "dependencies": {
+    "lodash": "^4.17.5",
+    "node-fetch": "^2.0.0"
+  }
+}
