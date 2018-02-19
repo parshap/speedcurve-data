@@ -23,6 +23,8 @@
   "homepage": "https://github.com/parshap/speedcurve-data#readme",
   "dependencies": {
     "lodash": "^4.17.5",
+    "minimist": "^1.2.0",
+    "ndjson": "^1.5.0",
     "node-fetch": "^2.0.0"
   },
   "devDependencies": {
