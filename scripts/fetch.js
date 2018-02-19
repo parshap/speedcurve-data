@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-const process = require("process");
 const fs = require("fs");
 const ndjson = require("ndjson");
-const minimist = require("minimist");
-const fetchData = require("./index");
+const fetchData = require("../src/fetchData");
+const parseArgs = require("../src/parseArgs");
 
 const writeNdJson = (array, path) => {
   const stream = ndjson.serialize();
@@ -14,12 +13,8 @@ const writeNdJson = (array, path) => {
 };
 
 const main = async () => {
+  const options = parseArgs();
   const { sites, urls, tests } = await fetchData();
-  const options = minimist(process.argv.slice(2), {
-    default: {
-      data: process.cwd(),
-    },
-  });
   writeNdJson(sites, `${options.data}/sites.ndjson`);
   writeNdJson(urls, `${options.data}/urls.ndjson`);
   writeNdJson(tests, `${options.data}/tests.ndjson`);
