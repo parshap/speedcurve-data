@@ -1,8 +1,16 @@
+const fs = require("fs");
 const minimist = require("minimist");
 
-module.exports = (argv = process.argv) =>
-  minimist(argv.slice(2), {
+module.exports = (argv = process.argv) => {
+  const options = minimist(argv.slice(2), {
     default: {
-      data: process.cwd(),
+      data: "data",
+      configPath: "config.json",
     },
   });
+  const config = JSON.parse(fs.readFileSync(options.configPath, "utf8"));
+  return {
+    ...options,
+    ...config,
+  };
+};

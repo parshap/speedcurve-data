@@ -14,7 +14,7 @@ const writeNdJson = (array, path) => {
 
 const main = async () => {
   const options = parseArgs();
-  const { sites, urls, tests } = await fetchData();
+  const { sites, urls, tests } = await fetchData(options);
   writeNdJson(sites, `${options.data}/sites.ndjson`);
   writeNdJson(urls, `${options.data}/urls.ndjson`);
   writeNdJson(tests, `${options.data}/tests.ndjson`);

@@ -2,7 +2,6 @@ const fetch = require("node-fetch");
 const flatMap = require("lodash/flatMap");
 
 const API_URL = "https://api.speedcurve.com/v1";
-const config = require("./config.json");
 
 const parallelLimit = async (limit, fns) => {
   const results = [];
@@ -87,8 +86,8 @@ const getTests = (urlDataArray, siteUrls) =>
  * objects. These are named with no suffix.
  */
 
-module.exports = async () => {
-  const apiKeys = Object.values(config.teams);
+module.exports = async options => {
+  const apiKeys = Object.values(options.teams);
   const urlsDataByTeam = await parallelLimit(
     5,
     apiKeys.map((key, i) => async () => ({
