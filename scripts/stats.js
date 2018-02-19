@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 
+/**
+ * Prints stats (mean, stdev, etc.) about various values (e.g,. SpeedIndex).
+ * Should be piped a tests.ndjson file. Example:
+ *
+ *     cat data/tests.ndjson | scripts/relevant.js | scripts/stats.js
+ */
+
 const ndjson = require("ndjson");
 const pump = require("pump");
 const through = require("through2");

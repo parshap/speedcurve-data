@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/**
+ * Downloads data from the SpeedCurve API and saves ndjson files in the data
+ * directory.
+ */
+
 const fs = require("fs");
 const ndjson = require("ndjson");
 const fetchData = require("../src/fetchData");
