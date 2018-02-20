@@ -22,7 +22,7 @@ const parseArgs = require("../src/parseArgs");
 
 const getChartSize = ({ width, height }) => ({
   width: width || Math.min(Math.max(process.stdout.columns - 4, 20), 120) || 40,
-  height: height || Math.min(Math.max(process.stdout.rows - 4, 15), 90) || 30,
+  height: height || Math.min(Math.max(process.stdout.rows - 4, 15), 30) || 30,
 });
 
 const readData = (stream, field) =>
