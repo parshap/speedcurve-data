@@ -94,6 +94,7 @@ const renderChart = ({
   xValues = [],
   yValues = [],
   period = 0,
+  char,
 }) => {
   const getMovingAvg = movingAverage(
     xValues,
@@ -120,7 +121,7 @@ const renderChart = ({
     .domain(d3Array.extent(averagedYValues))
     .nice(2);
   const y = yScale.range([0, height]);
-  chart.setFunctionX(xVal => y(getMovingAvg(x.invert(xVal))), 1, chartWidth);
+  chart.setFunctionX(xVal => y(getMovingAvg(x.invert(xVal))), 1, chartWidth, char);
   return [
     yScale.domain()[1],
     "\n",
@@ -169,6 +170,7 @@ const main = async () => {
       xValues,
       yValues,
       period: periodValue,
+      char: options.char,
     }),
   );
 };
